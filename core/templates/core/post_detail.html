@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="p-3">
+
+    <span>{{post.user.username}}</span>
+    <h6>{{post.title}}</h6>
+    <p>{{post.text}}</p>8
+    <small>{{post.topic.topic_name}}</small>
+
+    {% if post.image %}
+    <img src="{{post.image.url}}" alt=" Post Image " height="100px" width="auto">
+    {% endif %}
+
+    <div class="">
+        <a href="{% url 'like-post' post.id %}"><i class="fa-regular fa-thumbs-up"></i></a>
+        <a href="{% url 'dislike-post' post.id %}"><i class="fa-regular fa-thumbs-down"></i></a>
+    </div>
+
+
+    <div class="mt-4">
+        <form action="" method="post">
+            {% csrf_token %}
+            {{comment_form.as_p}}
+            <button type="submit" name="comment_submit">Enter</button>
+        </form>
+    </div>
+
+    <div>
+        {% for comment in comments %}
+        <div class="mb-3">
+            <span>{{comment.user.username}}</span>
+            <p>{{comment.text}}</p>
+            <button onclick="ToggleReplies('{{comment.id}}') ">reply</button>
+            <div id="replies-{{comment.id}}" style="display: none;">
+                <form method="post">
+                    {% csrf_token %}
+                    {{reply_form.as_p}}
+                    <input type="hidden" name="comment_id" value="{{comment.id}}">
+                    <button type="submit" name="reply_submit">Enter</button>
+                </form>
+                {% for reply in comment.replies.all %}
+                <div>
+                    <span class="border border-secondary rounded-pill px-2">{{request.user.username}}
+                        <i class="fa-regular fa-user" id="profile"></i>
+                    </span>
+                    <p>{{reply.content}}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    function ToggleReplies(commentid) {
+        const reply_box = document.getElementById(`replies-${commentid}`)
+        reply_box.style.display = reply_box.style.display === 'none' ? 'block' : 'none';
+        console.log("helloworld")
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const commentId = urlParams.get("comment_id");
+        if (commentId) {
+            ToggleReplies(commentId);
+        }});
+</script>
+{% endblock %}

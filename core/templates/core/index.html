@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-end mt-2">    
+    <a href="{% url 'post-form' %}" class="btn btn-primary"> + Add POST</a>
+</div>
+
+{% for post in posts %}
+<a href="{% url 'post-detail' post.id %}">
+<div class="rounded mb-3 p-4 shadow-lg">
+    
+    <div class="d-flex justify-content-between">
+        <h5>{{post.topic.topic_name}}</h5>
+        <h6>{{post.title}}</h6>
+        <div class="text-secondary border border-secondary rounded-pill px-3">{{post.user.username}}
+            {% if post.user.profile_picture %}
+            <img src="{{post.user.profile_picture.url}}" alt="" height="25px" class="rounded-circle" width="auto"></i></div>
+            {% else %}
+            <i class="fa-regular fa-user" id="profile"></i>
+            {% endif%} 
+    </div>
+    </div>
+    
+    <p>{{post.text}}</p>
+
+    <button class="btn btn-success">Comment</button>
+    <a href="{% url 'save-post' post.id %}">save</a>
+</div>
+</a>
+{% endfor %}
+
+{% endblock %}
